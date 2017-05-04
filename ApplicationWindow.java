@@ -1,8 +1,8 @@
 /**
-* Tamerincode database tool is an application that
+* This database tool is an application that
 * provides you with a dynamic way of adding, deleting and updating
 * records in a MySQL database.
-* @author  Tamer Altintop, student id s4908098
+* @author  Tamer Altintop
 * @version 1.0
 * @since 25/05/2017
 */
@@ -484,7 +484,6 @@ public class ApplicationWindow implements TableModelListener {
 			if(arg0.getClickCount()==2){
 				if(checkConnection()){
 					selectedTable = (String) listOfTablesNames.getSelectedValue();
-					//rs = st.executeQuery("SELECT * FROM " + selectedTable);
 					rs = dbOps.executeQuery("SELECT * FROM " + selectedTable);
 					loadData(rs);
 				}	
