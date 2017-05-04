@@ -11,12 +11,10 @@ The application has placeholder data that allows you to connect to a database th
 
 The structure of the project will be changed in future commits as I am splitting the functionability from the GUI.
 
-This is the version 1.1.
-
-In the version 1.0, both the GUI and the methods connecting and accessing the database were in the same class.
-In the version 1.1, there are new classes where most of the methods that are handling the database processes were moved. However, it appears to be working slightly slower than the previous version.
-In the future version 1.2, I am going to create a connection pool and reduce the number of connections issued towards the database.
-
-The project is also available under the compiled version:
-Version 1.1 -  http://tamerinblog.com/download/Tamerincode_DBToolV1.1.jar
+This is the version 1.1.<br/>
+In the version 1.0, both the GUI and the methods connecting and accessing the database were in the same class.<br/>
+In the version 1.1, there are new classes where most of the methods that are handling the database processes were moved. However, it appears to be working slightly slower than the previous version.<br/>
+In the future version 1.2, I am going to create a connection pool and reduce the number of connections issued towards the database.<br/><br/>
+The project is also available under the compiled version:<br/>
+Version 1.1 -  http://tamerinblog.com/download/Tamerincode_DBToolV1.1.jar<br/>
 Version 1.0 -  http://tamerinblog.com/download/Tamerincode_DBTool.jar
