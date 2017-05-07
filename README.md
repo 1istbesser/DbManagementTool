@@ -34,7 +34,7 @@ If for some reason, you are missing the mysql-connector-java-5.1.40 library whic
 <ul>
 <li> Version 1.0, both the GUI and the methods connecting and accessing the database were in one class, the swing components and the functionability were mixed together.</li>
 <li> Version 1.1, there are new classes where most of the methods that are handling the database processes were moved.<ul><li>However, it appears to be working slightly slower than the previous version.</li></ul></li>
-<li>Future version 1.2 - Coming soon. </li><br/><br/>
+<li>Future version 1.2 - Coming soon. </li></ul><br/><br/>
 <h2>Demo</h2>
 <p>The project is also available under the compiled version:</p><br/>
 <p>Version 1.1 -  http://tamerinblog.com/download/TamerincodeDBV1.1Runnable.jar</p>
