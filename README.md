@@ -18,7 +18,7 @@
 </ol>
 <p>
 If for some reason, you are missing the mysql-connector-java-5.1.40 library which should be under referenced libraries, then you can download it from here: http://www.tamerinblog.com/download/mysql-connector-java-5.1.40.zip and add it to your project.</p>
-<p> If you are using Eclipse, right-click on your project, go to Build Path -> Configure Build Path, select the "Libraries" tab, hit "Add external libraries" and add the "mysql-connector-java-5.1.40.bin.jar" file.</p>
+<p> If you are using Eclipse, you can import the missing library by right-click on your project, go to Build Path -> Configure Build Path, select the "Libraries" tab, hit "Add external libraries" and add the "mysql-connector-java-5.1.40.bin.jar" file.</p>
 
 <h2>Prerequisite</h2>
 <p>The application is operating with databases, thus, you need to have a MysQL database set. However, if you do not have one or don't know how to set one, the application has placeholder data that allows you to connect to a database that I set up for testing purposes.</p>
