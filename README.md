@@ -1,5 +1,5 @@
 # DbManagementTool
-Summary</hr>
+Summary<hr/>
 <p>I have to deal with databases on a daily basis because when you are working on websites, you often have to play around and test the data. That is why I decided to create this simple database management tool in Java, to make it easier to add/ edit and delete records. I haven't tested it with other types of databases than MySQL, therefore, I only know for sure it works with MySQL databases.</p>
 <p>The application is created in Java and it uses an external library for the MySQL connection part, a library named "Mysql Connector Java". Therefore, if you want to open up this project yourself, make sure you have a Java IDE ready, I recommand Eclipse with JDK8.</p>
 <br/>
