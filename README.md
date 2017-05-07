@@ -37,5 +37,5 @@ If for some reason, you are missing the mysql-connector-java-5.1.40 library whic
 <li>Future version 1.2 - Coming soon. </li><br/><br/>
 <h2>Demo</h2>
 <p>The project is also available under the compiled version:</p><br/>
-<p>Version 1.1 -  http://tamerinblog.com/download/Tamerincode_DBToolV1.1.jar</p>
-<p>Version 1.0 -  http://tamerinblog.com/download/TamerincodeDBV1.1Runnable.jar</p>
+<p>Version 1.1 -  http://tamerinblog.com/download/TamerincodeDBV1.1Runnable.jar</p>
+<p>Version 1.0 -  http://tamerinblog.com/download/Tamerincode_DBTool.jar</p>
