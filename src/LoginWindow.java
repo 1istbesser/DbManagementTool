@@ -1,10 +1,12 @@
 /**
-* Tamerincode database tool is an application that
+* Tamerincode ~ This database tool is an application that
 * provides you with a dynamic way of adding, deleting and updating
 * records in a MySQL database.
-* @author  Tamer Altintop, student id s4908098
-* @version 1.0
+* @author  Tamer Altintop
+* @version 1.1
 * @since 25/05/2017
+* Web: www.tamerinblog.com
+* GitHub: github.com/1istbesser
 */
 
 import java.awt.BorderLayout;
@@ -104,7 +106,9 @@ public class LoginWindow {
 	 * <b>blueish</b> - The custom color with the rgb(34, 153, 183). */
 	private Color blueish = new Color(34, 153, 183);
 	
-	
+	/**
+	 * Creating a new DatabaseOperations object.
+	 */
 	private DatabaseOperations dbOps = new DatabaseOperations();
 	
 	/**
@@ -138,7 +142,7 @@ public class LoginWindow {
 	 */
 	private void createFrame(){
 		frame = new JFrame();
-		frame.setTitle("Tamerincode database tool v1.0.1");
+		frame.setTitle("Tamerincode ~ A database tool V1.1");
 		frame.setSize(800, 600);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);	
 	}
@@ -281,8 +285,8 @@ public class LoginWindow {
 	
 	/**
 	 * This method sets the listener for the 'Connect' button. The database connection is tested<br>
-	 * with the parameters provided by the user through the text fields.<br><br>
-	 * If the connection is successful, the connection is closed, the current window is <b>disposed</b>,<br>
+	 * with the parameters provided by the user through the text fields through a DatabaseOperations method..<br><br>
+	 * If the connection is successful, the current window is <b>disposed</b>,<br>
 	 * and the <b>ApplicationWindow</b> is invoked.<br><br>
 	 */
 	private void setConnectButtonListener() {
@@ -304,6 +308,4 @@ public class LoginWindow {
 			}
 		});
 	}
-
-
 }
