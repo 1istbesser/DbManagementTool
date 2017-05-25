@@ -1,5 +1,5 @@
 /**
-* Tamerincode ~ This database tool is an application that
+* Tamerincodechange ~ This database tool is an application that
 * provides you with a dynamic way of adding, deleting and updating
 * records in a MySQL database.
 * @author  Tamer Altintop
@@ -45,7 +45,7 @@ public class ApplicationWindow implements TableModelListener {
 	private JPanel panel, panelLeft, panelRight;
 	private JButton btnOpen, btnAdd, btnDelete, btnExit;
 	private JTable table;
-	private String username = null, password = null, database = null, host = null, selectedTable = null;
+	private String selectedTable = null;
 	private final DefaultTableModel tableModel = new DefaultTableModel();
 	private ResultSet rs;
 
@@ -58,31 +58,15 @@ public class ApplicationWindow implements TableModelListener {
 	private JLabel listHeader;
 	private Color someBlue = new Color(72, 121, 150), someBlue2 = new Color(12, 16, 56), someGreen = new Color(79, 249, 108);
 	
-	private NewRow newRow;
 
-	public ApplicationWindow(String conUsername, String conPassword, String conHost, String conDatabase){
-		dbOps.setCredentials(conUsername, conPassword, conHost, conDatabase);
-		setCredentials(conUsername, conPassword, conHost, conDatabase);
+	public ApplicationWindow() throws SQLException{
 		setFrame();
 		addButtons();
 		createMenu();
 		setTablesList();
 		createPanel();
-		newRow = new NewRow();
 		frame.add(panel);
 		frame.setVisible(true);
-	}
-
-	private void setCredentials(String conUsername, String conPassword, String conHost, String conDatabase){
-		host=conHost;
-		database=conDatabase;
-		username=conUsername;
-		password=conPassword;
-	}
-
-	private void reconnect(){
-		dbOps.closeConnection();
-		dbOps.createConnection();
 	}
 
 	private void setFrame() {
@@ -96,24 +80,8 @@ public class ApplicationWindow implements TableModelListener {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);	
 	}
 
-	private boolean checkConnection(){
-			if(!dbOps.checkConnection()){
-				int n = JOptionPane.showConfirmDialog(frame,"The connection was closed, reconnect?","Database security measure",
-						JOptionPane.YES_NO_OPTION);
-				//If the answer is yes, try to reconnect.
-				if(n == JOptionPane.YES_OPTION){
-					reconnect();
-					
-				//If the answer is no, dispose the frame and return to LoginWindow.
-				} else if ( n == JOptionPane.NO_OPTION){
-					frame.dispose();
-					new LoginWindow();
-				}
-			}
-			return true;
-		}
 
-	private void setTablesList(){
+	private void setTablesList() throws SQLException{
 	tablesListScrollPane = new JScrollPane(listOfTablesNames); 
 	tablesListScrollPane.setBorder(null);
 	listOfTablesNames.setBackground(someBlue);
@@ -121,32 +89,24 @@ public class ApplicationWindow implements TableModelListener {
 	listOfTablesNames.setSelectionBackground(someBlue2);
 	listOfTablesNames.setSelectionForeground(Color.white);
 	// atrs = all tables resultset
-	ResultSet atrs = null;
+	ResultSet atrs=null;
 	atrs = dbOps.getAllTables();
 	if(atrs==null){
 		JOptionPane.showMessageDialog(frame, "Could not get the tables names!\n");
 		frame.dispose();
 		new LoginWindow();
 	} else {
-		try{
-			while (atrs.next()) {
-				String tableName = atrs.getString(3);
-				tablesNamesModel.addElement(tableName);
+		try {
+			while(atrs.next()){
+				try {
+					tablesNamesModel.addElement(atrs.getString(3));
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
-			//Code 432 - atrs has no next or it couldn't use getString(3).
-			JOptionPane.showMessageDialog(frame, "There is a SQLException error! Code 432.\n");
-			frame.dispose();
-			new LoginWindow();
-		}  finally{
-			try {
-				atrs.close();
-				dbOps.closeResultSet();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		}
+		} 
 	}
 		listOfTablesNames.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		listOfTablesNames.setSelectedIndex(0);
@@ -209,7 +169,8 @@ public class ApplicationWindow implements TableModelListener {
 		disconnect.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				frame.setVisible(false);
+				dbOps.closeConn();
+				frame.dispose();
 				new LoginWindow();
 			}
 		});
@@ -288,7 +249,7 @@ public class ApplicationWindow implements TableModelListener {
 		});
 	}
 
-	private void createPanel(){
+	private void createPanel() throws SQLException{
 		// Main panel
 		panel = new JPanel(new BorderLayout());
 		// Left side
@@ -368,12 +329,15 @@ public class ApplicationWindow implements TableModelListener {
 		@Override
 		public void mouseClicked(MouseEvent arg0) {
 			if(arg0.getClickCount()==2){
-				if(checkConnection()){
 					selectedTable = (String) listOfTablesNames.getSelectedValue();
 					//rs = st.executeQuery("SELECT * FROM " + selectedTable);
-					rs = dbOps.executeQuery("SELECT * FROM " + selectedTable);
+					try {
+						rs = dbOps.executeQuery("SELECT * FROM " + selectedTable);
+					} catch (SQLException e) {
+						e.printStackTrace();
+					}
 					loadData(rs);
-				}	
+				
 	        }
 		}
 
@@ -421,7 +385,6 @@ public class ApplicationWindow implements TableModelListener {
 		 */
 		@Override
 		public void actionPerformed(ActionEvent arg0){
-			if(checkConnection()){
 				int nrCols = table.getColumnCount();
 				Vector<String> row = new Vector<String>();
 				for(int i=1; i<= nrCols; i++){
@@ -429,19 +392,24 @@ public class ApplicationWindow implements TableModelListener {
 				}
 				DefaultTableModel model = (DefaultTableModel)table.getModel();
 				model.addRow(row);
-			} 
+			
 		}
 	}
 	private class listenOpenButton implements ActionListener{
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			
-			if(checkConnection()){
+
 				selectedTable = (String) listOfTablesNames.getSelectedValue();
 				String sqlString = "SELECT * FROM " + selectedTable;
-				ResultSet tdrs = dbOps.executeQuery(sqlString);
+				ResultSet tdrs = null;
+				try {
+					tdrs = dbOps.executeQuery(sqlString);
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}
 				loadData(tdrs);
-			}	
+				
 		}
 	}
 
@@ -452,7 +420,7 @@ public class ApplicationWindow implements TableModelListener {
 		 */
 		@Override
 		public void actionPerformed(ActionEvent arg0){
-			if(checkConnection()){
+
 				DefaultTableModel model = (DefaultTableModel)table.getModel();
 				int row = table.getSelectedRow();
 				if(row<0){
@@ -461,10 +429,15 @@ public class ApplicationWindow implements TableModelListener {
 					String cellValue4 = String.valueOf( table.getValueAt(row, 0) );
 					int id = Integer.parseInt(cellValue4);
 					String selectedTable2 = (String) listOfTablesNames.getSelectedValue();
-					boolean deleted = dbOps.deleteRecord(selectedTable2, id);
+					boolean deleted = false;
+					try {
+						deleted = dbOps.deleteRecord(selectedTable2, id);
+					} catch (SQLException e) {
+						e.printStackTrace();
+					}
 					if(deleted) model.removeRow(row);
 				}
-			} 
+			
 		}
 	}
 
@@ -475,20 +448,22 @@ public class ApplicationWindow implements TableModelListener {
 
 	@Override
 	public void tableChanged(TableModelEvent e) {
-		checkConnection();
+
 		int row = e.getFirstRow();
 		int column = e.getColumn();
 		int type = e.getType();
 		if(type==1){
 			try {
-				newRow.addNewColumn(selectedTable, username, password, database, host);
-			} catch (ClassNotFoundException e1) {
-				e1.printStackTrace();
+				DatabaseOperations.addNewColumn(selectedTable);
 			} catch (SQLException e1) {
 				e1.printStackTrace();
 			}
 			String selectedTable5 = (String) listOfTablesNames.getSelectedValue();
-			rs = dbOps.executeQuery("SELECT * FROM " + selectedTable5);
+			try {
+				rs = dbOps.executeQuery("SELECT * FROM " + selectedTable5);
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
 			loadData(rs);
 		} else if(type==0){
 			if(row>=0 && column>=0){
@@ -497,8 +472,12 @@ public class ApplicationWindow implements TableModelListener {
 				String namec = table.getColumnName(column);
 				String cellValue3 = String.valueOf(table.getValueAt(row, 0));
 				int id = Integer.parseInt(cellValue3);
-				String query = "UPDATE " + selectedTable2 + " SET " + namec + "=" + "?" + " WHERE id='" + id + "'";
-				dbOps.executePreparedStatement(query, cellValue);
+				String query = "UPDATE " + selectedTable2 + " SET " + namec + "='" + cellValue + "' WHERE id='" + id + "'";
+				try {
+					dbOps.executePreparedStatement(query);
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}
 			}
 		}
 	}

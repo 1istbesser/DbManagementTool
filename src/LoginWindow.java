@@ -17,6 +17,8 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
+
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -51,8 +53,6 @@ public class LoginWindow {
 	private GridBagConstraints c = new GridBagConstraints();
 
 	private Color blueish = new Color(34, 153, 183);
-	
-	private DatabaseOperations dbOps = new DatabaseOperations();
 	
 	public LoginWindow(){
 		createFrame();
@@ -147,10 +147,10 @@ public class LoginWindow {
 
 	private void addTextFields(){
 		//Instantization
-		tfUsername = new JTextField("increible");
-		pfPassword = new JPasswordField("increible");
-		tfHost = new JTextField("160.153.128.32:3306");
-		tfDataBase = new JTextField("SuperVShop");
+		tfUsername = new JTextField("root");
+		pfPassword = new JPasswordField("");
+		tfHost = new JTextField("localhost");
+		tfDataBase = new JTextField("hikariTest");
 		
 		//Setting properties
 		tfUsername.setPreferredSize(new Dimension(170,20));
@@ -194,11 +194,14 @@ public class LoginWindow {
 				password = pfPassword.getText();
 				host = tfHost.getText();
 				database = tfDataBase.getText();
-				dbOps.setCredentials(username, password, host, database);
-				Boolean connected = dbOps.checkCredentials();
+				boolean connected = DatabaseOperations.checkCredentials(host, database, username, password);
 				if(connected){
 					frame.dispose();
-					new ApplicationWindow(username, password, host, database);
+					try {
+						new ApplicationWindow();
+					} catch (SQLException e) {
+						e.printStackTrace();
+					}
 				} else {
 					JOptionPane.showMessageDialog(frame, "Wrong connection details !\n");
 				}
