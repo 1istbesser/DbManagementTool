@@ -6,5 +6,13 @@
 /ApplicationWindow$5.class
 /ApplicationWindow$6.class
 /ApplicationWindow$7.class
-/ApplicationWindow$8.class
-/ApplicationWindow$9.class
+/ApplicationWindow$dblClick.class
+/ApplicationWindow$listenAddButton.class
+/ApplicationWindow$listenExitButton.class
+/ApplicationWindow$listenOpenButton.class
+/ApplicationWindow$listenRemoveButton.class
+/DatabaseOperations.class
+/LoginWindow$1.class
+/LoginWindow.class
+/MainClass.class
+/NewRow.class
