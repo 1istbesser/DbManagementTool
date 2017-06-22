@@ -3,14 +3,15 @@
 * provides you with a dynamic way of adding, deleting and updating
 * records in a MySQL database.
 * @author  Tamer Altintop
-* @version 1.1
-* @since 25/05/2017
+* @version 1.2
+* @since 01/06/2017
 * * Web: www.tamerinblog.com
 * GitHub: github.com/1istbesser
 */
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -23,6 +24,7 @@ import java.util.Vector;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JColorChooser;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -33,7 +35,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
@@ -42,8 +46,8 @@ import javax.swing.table.DefaultTableModel;
 public class ApplicationWindow implements TableModelListener {
 	private DatabaseOperations dbOps = new DatabaseOperations();
 	private JFrame frame;
-	private JPanel panel, panelLeft, panelRight;
-	private JButton btnOpen, btnAdd, btnDelete, btnExit;
+	private JPanel panel, panelLeft, panelRight, createAccountPanel;
+	private JButton btnCreate, btnAdd, btnDelete, btnExit;
 	private JTable table;
 	private String selectedTable = null;
 	private final DefaultTableModel tableModel = new DefaultTableModel();
@@ -74,7 +78,7 @@ public class ApplicationWindow implements TableModelListener {
 		frame = new JFrame();
 		
 		//Setting properties
-		frame.setTitle("Tamerincode ~ A database tool V1.1");
+		frame.setTitle("Tamerincode ~ A database tool V1.2");
 		frame.setSize(800, 600);
 		frame.setExtendedState(JFrame.MAXIMIZED_BOTH); 
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);	
@@ -116,7 +120,7 @@ public class ApplicationWindow implements TableModelListener {
 
 	private void addButtons(){
 		//Instantisation of the buttons
-		btnOpen = new JButton("Open table");
+		btnCreate = new JButton("Open table");
 		btnAdd = new JButton("Add record");
 		btnDelete = new JButton("Delete record");
 		btnExit = new JButton("Exit");
@@ -125,11 +129,11 @@ public class ApplicationWindow implements TableModelListener {
 		ActionListener exitButton = new listenExitButton();
 		ActionListener addButton = new listenAddButton();
 		ActionListener removeButton = new listenRemoveButton();
-		ActionListener openButton = new listenOpenButton();
+		ActionListener openButton = new listenCreateButton();
 		MouseListener dblClick = new dblClick();
 		
 		listOfTablesNames.addMouseListener(dblClick);
-		btnOpen.addActionListener(openButton);
+		btnCreate.addActionListener(openButton);
 		btnExit.addActionListener(exitButton);
 		btnAdd.addActionListener(addButton);
 		btnDelete.addActionListener(removeButton);
@@ -313,8 +317,8 @@ public class ApplicationWindow implements TableModelListener {
 		c.weightx=1;
 		c.weighty=0;
 		c.gridy=2;
-		panelLeft.add(btnOpen, c);
-		btnOpen.setBorder(new EmptyBorder(10,40,10,40));
+		panelLeft.add(btnCreate, c);
+		btnCreate.setBorder(new EmptyBorder(10,40,10,40));
 		panelLeft.setBorder(new EmptyBorder(0,10,10,10));
 		panelLeft.setBackground(someBlue);
 		panel.add(scrollTable, BorderLayout.CENTER);
@@ -330,7 +334,6 @@ public class ApplicationWindow implements TableModelListener {
 		public void mouseClicked(MouseEvent arg0) {
 			if(arg0.getClickCount()==2){
 					selectedTable = (String) listOfTablesNames.getSelectedValue();
-					//rs = st.executeQuery("SELECT * FROM " + selectedTable);
 					try {
 						rs = dbOps.executeQuery("SELECT * FROM " + selectedTable);
 					} catch (SQLException e) {
@@ -368,22 +371,12 @@ public class ApplicationWindow implements TableModelListener {
 	}
 
 	private class listenExitButton implements ActionListener {
-
-		/* (non-Javadoc)
-		 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-		 */
-		@Override
 		public void actionPerformed(ActionEvent arg0) {
 			System.exit(0);
 		}
 	}
 
 	private class listenAddButton implements ActionListener {
-
-		/* (non-Javadoc)
-		 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-		 */
-		@Override
 		public void actionPerformed(ActionEvent arg0){
 				int nrCols = table.getColumnCount();
 				Vector<String> row = new Vector<String>();
@@ -395,30 +388,48 @@ public class ApplicationWindow implements TableModelListener {
 			
 		}
 	}
-	private class listenOpenButton implements ActionListener{
+	private class listenCreateButton implements ActionListener{
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			createAccountPanel = new JPanel();
+			JTextField row1= new JTextField("Table name");
+			String[] items = {"int", "varchar", "Data", "text"};
+			JComboBox<String> dataTypes = new JComboBox<String>(items);
+			JButton addTextFields = new JButton("Add 1 field");
+			JTextField row2= new JTextField("Length");
+			row2.setPreferredSize(new Dimension(50,25));
+			row1.setPreferredSize(new Dimension(200,25));
+			createAccountPanel.add(row1);
+			createAccountPanel.add(dataTypes);
+			createAccountPanel.add(row2);
+			createAccountPanel.add(addTextFields);
+			ActionListener addTextField = new listenAddFieldButton();
+			addTextFields.addActionListener(addTextField);
 			
 
-				selectedTable = (String) listOfTablesNames.getSelectedValue();
-				String sqlString = "SELECT * FROM " + selectedTable;
-				ResultSet tdrs = null;
-				try {
-					tdrs = dbOps.executeQuery(sqlString);
-				} catch (SQLException e1) {
-					e1.printStackTrace();
-				}
-				loadData(tdrs);
+			UIManager.put("OptionPane.cancelButtonText", "Cancel");
+			UIManager.put("OptionPane.okButtonText", "Create");
+			int result = JOptionPane.showConfirmDialog(null, createAccountPanel, "Create a new table",
+					JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+			if (result == JOptionPane.OK_OPTION) {
+				//System.out.println(role+""+fnameValue+""+lnameValue+""+pwValue+""+wcodeValue+""+salaryValue);
+			} else {
+				//System.out.println("Cancelled");
+			}
 				
+		}
+	}
+	private class listenAddFieldButton implements ActionListener{
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			 JTextField tfield = new JTextField();
+			 createAccountPanel.add(tfield);
+			 createAccountPanel.revalidate();
+			 createAccountPanel.repaint();
 		}
 	}
 
 	private class listenRemoveButton implements ActionListener{
-
-		/* (non-Javadoc)
-		 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-		 */
-		@Override
 		public void actionPerformed(ActionEvent arg0){
 
 				DefaultTableModel model = (DefaultTableModel)table.getModel();
