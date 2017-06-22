@@ -30,9 +30,9 @@ I zipped all of them and you can download the archive here: http://tamerinblog.c
 <p><b>MainClass.java</b>, the main class with the main method and it contains a call to the logging window. If you want to run the project, this is the file you should attempt to run.<br/>
 <b>LoginWindow</b>, has a JFrame and all the other Java Swing components that you will find into the login window when booting up the app. It has a button listener that triggers a function inside <b>DatabaseOperations.java</b> to check the connection credentials provided in the input fields.<br/>
 <b>ApplicationWindow</b>, here is the main window that you see once you are connected to a database. Tables, records, operations, everything is laid out here, but they are just blueprints, the graphic part for the functions behind them are called from <b>DatabaseOperations.java</b><br/><br/>
-<strike><b>NewRow.java</b>, one separated function that will add empty rows to your table upon triggering the button. It will probably be moved into the <b>DatabaseOperations.java</b> in future versions.<br/></strike><p>This class is no longer available, the content was moved into <b>DatabaseOperations.java</b></p><br/><br/>
-<b>DatabaseOperations.java</b>, here all the magic happens.</p><br/>
-<p><b>DatabaseHandler.java</b>, this class implements the hikari connection pool which handles the database connections across the whole app.</p><br/><br/>
+<strike><b>NewRow.java</b>, one separated function that will add empty rows to your table upon triggering the button. It will probably be moved into the <b>DatabaseOperations.java</b> in future versions.<br/></strike><br/>
+<b>DatabaseOperations.java</b>, here all the magic happens.<br/>
+<b>DatabaseHandler.java</b>, this class implements the hikari connection pool which handles the database connections across the whole app.</p>
 <h2>The Version history</h2>
 </p> Current version: 1.2</p><br/>
 <ul>
