@@ -21,7 +21,8 @@ If for some reason, you are missing the mysql-connector-java-5.1.40 library whic
 <p> If you are using Eclipse, you can import the missing library by right-click on your project, go to Build Path -> Configure Build Path, select the "Libraries" tab, hit "Add external libraries" and add the "mysql-connector-java-5.1.40.bin.jar" file.</p>
 
 <h2>Prerequisite</h2>
-<p>The application is operating with databases, thus, you need to have a MysQL database set. However, if you do not have one or don't know how to set one, the application has placeholder data that allows you to connect to a database that I set up for testing purposes.</p>
+<p>The application is operating with databases, thus, you need to have a MysQL database set. However, if you do not have one or don't know how to set one, the application has placeholder data that allows you to connect to a database that I set up for testing purposes.</p><p>
+Also you will need three external libraries for the latest version(1.2): Hikari connection pool, weblaf look and feel and the simple logging facade for java. I zipped all of them and you can download the archive here: http://tamerinblog.com/download/java-libraries.zip
 
 <h2>The structure</h2>
 <p><b>MainClass.java</b>, a call to the logging window. However, if you want to run the project, this is the file you should attempt to run for its the main file.<br/>
