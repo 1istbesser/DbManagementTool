@@ -3,8 +3,8 @@
 * provides you with a dynamic way of adding, deleting and updating
 * records in a MySQL database.
 * @author  Tamer Altintop
-* @version 1.1
-* @since 25/05/2017
+* @version 1.2
+* @since 01/06/2017
 * * Web: www.tamerinblog.com
 * GitHub: github.com/1istbesser
 */
