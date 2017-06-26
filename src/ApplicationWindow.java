@@ -1,12 +1,10 @@
 /**
-* Tamerincode ~ This database tool is an application that
+* Tamerincode database tool is an application that
 * provides you with a dynamic way of adding, deleting and updating
 * records in a MySQL database.
-* @author  Tamer Altintop
-* @version 1.1
+* @author  Tamer Altintop, student id s4908098
+* @version 1.0
 * @since 25/05/2017
-* * Web: www.tamerinblog.com
-* GitHub: github.com/1istbesser
 */
 
 import java.awt.BorderLayout;
@@ -161,13 +159,7 @@ public class ApplicationWindow implements TableModelListener {
 		frame.add(panel);
 		frame.setVisible(true);
 	}
-	/**
-	 * Setting up the credentials for other methods to use.
-	 * @param conUsername
-	 * @param conPassword
-	 * @param conHost
-	 * @param conDatabase
-	 */
+
 	private void setCredentials(String conUsername, String conPassword, String conHost, String conDatabase){
 		host=conHost;
 		database=conDatabase;
@@ -190,7 +182,7 @@ public class ApplicationWindow implements TableModelListener {
 		frame = new JFrame();
 		
 		//Setting properties
-		frame.setTitle("Tamerincode ~ A database tool V1.1");
+		frame.setTitle("Tamerincode database tool v1.0.1");
 		frame.setSize(800, 600);
 		frame.setExtendedState(JFrame.MAXIMIZED_BOTH); 
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);	
