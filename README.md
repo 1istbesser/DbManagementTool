@@ -43,7 +43,7 @@ I zipped all of them and you can download the archive here: http://tamerinblog.c
 </p> Current version: 1.2</p><br/>
 <ul>
 <li> Version 1.0, both the GUI and the methods connecting and accessing the database are in one class, the swing components and the functionability are mixed together.</li>
-<li> Version 1.1, there are new classes where most of the methods that are handling the database processes.<ul><li>However, it still has a lot of connection methods and information shared across the app. Also it appears to be working slightly slower than the previous version.</li></li>
+<li> Version 1.1, there are new classes where most of the methods that are handling the database processes.<ul><li>However, it still has a lot of connection methods and information shared across the app. Also it appears to be working slightly slower than the previous version.</li></ul></li>
 <li>Version 1.2 - The NewRow class was removed and its content was moved into <b>DatabaseOperations.java</b>, the connections were removed from all classes and the whole database connection activity is handled in the <b>DatabaseHandler.java</b> by a connection pool. The look and feel of the app was changed to give it a more modern appearance. </li></ul><br/><br/>
 <h2>Demo</h2>
 <p>The project is also available under the compiled version:</p><br/>
