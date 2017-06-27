@@ -1,11 +1,11 @@
 /**
-* Tamerincode database tool is an application that
-* provides you with a dynamic way of adding, deleting and updating
-* records in a MySQL database.
-* @author  Tamer Altintop, student id s4908098
-* @version 1.0
-* @since 25/05/2017
-*/
+ * Javami database tool is an application that
+ * provides you with a dynamic way of adding, deleting and updating
+ * records in a MySQL database.
+ * @author  Tamer Altintop
+ * @version 2.0
+ * Github project: github.com/1istbesser/DbManagementTool
+ */
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -15,6 +15,8 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
+
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -38,10 +40,10 @@ import javax.swing.border.EmptyBorder;
  */
 
 public class LoginWindow {	
-	
+
 	/** The declaration of the frame. */
 	private JFrame frame;
-	
+
 	/** The declaration of the panels.<br>
 	 * <ol>
 	 * <li><b>panel</b> - The main panel.</li>
@@ -51,10 +53,10 @@ public class LoginWindow {
 	 * <li><b>panelBottom</b> - The sub-panel taking up bottom area.</li>
 	 * </ol>*/
 	private JPanel panel, panelCenterMain, panelCenter, panelTop, panelBottom;
-	
+
 	/** The declaration of the icon images. */
 	private ImageIcon dbImage = null;
-	
+
 	/** The declaration of the labels.<br>
 	 * <ol>
 	 * <li><b>lblWelcome</b> - The label for the welcome message.</li>
@@ -65,13 +67,13 @@ public class LoginWindow {
 	 * <li><b>lblAdditional</b> - The label for the additional information message.</li>
 	 * </ol> */
 	private JLabel lblWelcome, lblUsername, lblPassword, lblHost, lblDataBase, lblAdditional;
-	
+
 	/** The declaration of the buttons.<br>
 	 * <ol>
 	 * <li><b>btnConnect</b> - The button to connect to the database.</li>
 	 * </ol> */
 	private JButton btnConnect;
-	
+
 	/** The declaration of the text fields.<br>
 	 * <ol>
 	 * <li><b>tfUsername</b> - The text field for the username parameter.</li>
@@ -79,13 +81,13 @@ public class LoginWindow {
 	 * <li><b>tfDatabase</b> - The text field for the database parameter.</li>
 	 * </ol> */
 	private JTextField tfUsername, tfHost, tfDataBase;
-	
+
 	/** The declaration of the password field 
 	 * <ol>
 	 * <li><b>pfPassword</b> - The password field for the password parameter.</li>
 	 * </ol> */
 	private JPasswordField pfPassword;
-	
+
 	/** The declaration of the String variables used to store the value of the database connection parameters.
 	 * <ol>
 	 * <li><b>username</b> - The string containing the username value.</li>
@@ -94,19 +96,16 @@ public class LoginWindow {
 	 * <li><b>host</b> - The string containing the host value.</li>
 	 * </ol> */
 	private String username, host, database, password;
-	
+
 	/** The declaration of the Grid Bag Constraint.<br>
 	 * <b>c</b> - The Grid Bag Constraint. Its name is kept as short as possible for
 	 * it is widly used throughout the application. */
 	private GridBagConstraints c = new GridBagConstraints();
-	
+
 	/** The declaration and initialization of the custom colors.<br>
 	 * <b>blueish</b> - The custom color with the rgb(34, 153, 183). */
 	private Color blueish = new Color(34, 153, 183);
-	
-	
-	private DatabaseOperations dbOps = new DatabaseOperations();
-	
+
 	/**
 	 * Instantiates a new login window.<br><br>
 	 * <b>List of contained methods</b>
@@ -132,7 +131,7 @@ public class LoginWindow {
 		frame.add(panel);
 		frame.setVisible(true);
 	}
-	
+
 	/**
 	 * Creates the frame and sets the frame properties like size and title.
 	 */
@@ -142,7 +141,7 @@ public class LoginWindow {
 		frame.setSize(800, 600);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);	
 	}
-	
+
 	/**
 	 * Creates the main panel and the sub-panels. It also sets up the properties of each panel or sub-panel and it adds each panel<br>
 	 * to their parent panel.
@@ -156,16 +155,16 @@ public class LoginWindow {
 	private void createPanel(){
 		//Initialization
 		panel = new JPanel(new BorderLayout());
-	    panelCenterMain = new JPanel(new BorderLayout());
+		panelCenterMain = new JPanel(new BorderLayout());
 		panelCenter = new JPanel(new GridBagLayout());
 		panelTop = new JPanel(new GridBagLayout());
 		panelBottom = new JPanel(new GridBagLayout());
-		
+
 		//Setting properties
 		panelTop.setBackground(blueish);
 		panelTop.setBorder(new EmptyBorder(10, 10, 10, 10));
 		panelCenter.setBackground(blueish);
-		
+
 		//Adding them to the parent panel.
 		panel.add(panelBottom, BorderLayout.SOUTH);
 		panel.add(panelTop, BorderLayout.NORTH);
@@ -177,12 +176,12 @@ public class LoginWindow {
 	 * This method instantiates the images and adds them to the corresponding panel.
 	 */
 	private void addImages(){
-		
+
 		dbImage = new ImageIcon(this.getClass().getClassLoader().getResource("db4.png"));
 		JLabel lblDatabaseImage = new JLabel(dbImage);
 		panelCenterMain.add(lblDatabaseImage, BorderLayout.NORTH);
 	}
-	
+
 	/**
 	 * This method instantiates the labels and adds them to the corresponding panel using the Grid Bag Constraints.
 	 */
@@ -194,14 +193,14 @@ public class LoginWindow {
 		lblPassword = new JLabel("Password:");
 		lblHost = new JLabel("Host:");
 		lblDataBase = new JLabel("Database:");
-		
+
 		//Setting properties
 		lblAdditional.setForeground(Color.white);
 		lblUsername.setForeground(Color.white);
 		lblPassword.setForeground(Color.white);
 		lblHost.setForeground(Color.white);
 		lblDataBase.setForeground(Color.white);
-		
+
 		//Adding the labels to the panels.
 		panelTop.add(lblWelcome);
 		c.gridx=0;
@@ -241,13 +240,13 @@ public class LoginWindow {
 		pfPassword = new JPasswordField("increible");
 		tfHost = new JTextField("160.153.128.32:3306");
 		tfDataBase = new JTextField("SuperVShop");
-		
+
 		//Setting properties
 		tfUsername.setPreferredSize(new Dimension(170,20));
 		tfHost.setPreferredSize(new Dimension(170,20));
 		tfDataBase.setPreferredSize(new Dimension(170,20));
 		pfPassword.setPreferredSize(new Dimension(170,20));
-		
+
 		//Adding the text fields and password fields to the panels.
 		c.anchor = GridBagConstraints.LINE_START;
 		c.insets = new Insets(3,20,3,3);
@@ -264,21 +263,21 @@ public class LoginWindow {
 		c.gridy=2;
 		panelCenter.add(tfHost, c);
 	}
-	
+
 	/**
 	 * This method instantiates the buttons and it adds them to the panels.
 	 */
 	private void addButtons(){
 		//Instantization
 		btnConnect = new JButton("Connect");
-		
+
 		//Adding the buttons to the panels
 		c.anchor = GridBagConstraints.LINE_END;
 		c.gridx=3;
 		c.gridy=5;
 		panelCenter.add(btnConnect, c);
 	}
-	
+
 	/**
 	 * This method sets the listener for the 'Connect' button. The database connection is tested<br>
 	 * with the parameters provided by the user through the text fields.<br><br>
@@ -293,11 +292,15 @@ public class LoginWindow {
 				password = pfPassword.getText();
 				host = tfHost.getText();
 				database = tfDataBase.getText();
-				dbOps.setCredentials(username, password, host, database);
-				Boolean connected = dbOps.checkCredentials();
+				Boolean connected = DatabaseOperations.checkCredentials(host, database, username, password);
 				if(connected){
 					frame.dispose();
-					new ApplicationWindow(username, password, host, database);
+					try {
+						new ApplicationWindow();
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				} else {
 					JOptionPane.showMessageDialog(frame, "Wrong connection details !\n");
 				}

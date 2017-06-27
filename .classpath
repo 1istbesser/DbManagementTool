@@ -2,7 +2,10 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="images"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
-	<classpathentry exported="true" kind="lib" path="C:/repository/Java-lib/mysql-connector-java-5.1.40/mysql-connector-java-5.1.40-bin.jar"/>
+	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
+	<classpathentry exported="true" kind="lib" path="C:/Users/1istbesser/Documents/java-libraries/dbmanagement/HikariCP-2.6.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/Users/1istbesser/Documents/java-libraries/dbmanagement/mysql-connector-java-5.1.41.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/Users/1istbesser/Documents/java-libraries/dbmanagement/slf4j-api-1.7.25.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/Users/1istbesser/Documents/java-libraries/dbmanagement/weblaf-complete-1.29.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

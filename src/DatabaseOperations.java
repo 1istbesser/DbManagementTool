@@ -1,114 +1,38 @@
+/**
+ * Javami database tool is an application that
+ * provides you with a dynamic way of adding, deleting and updating
+ * records in a MySQL database.
+ * @author  Tamer Altintop
+ * @version 2.0
+ * Github project: github.com/1istbesser/DbManagementTool
+ */
+
 import java.sql.Connection;
-import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
+import java.time.LocalDate;
 import java.util.Vector;
 
-import com.mysql.jdbc.DatabaseMetaData;
-import com.mysql.jdbc.PreparedStatement;
+
 import com.mysql.jdbc.ResultSetMetaData;
 
 
 public class DatabaseOperations {
-	private String username=null, password=null, host=null, database=null;
-	private Connection conn=null;
-	private ResultSet dbrs=null;
-	private Statement dbst=null;
+	private static DatabaseHandler dbh = new DatabaseHandler();
 
-	public void setCredentials(String testUsername, String testPassword, String testHost, String testDatabase){
-		username = testUsername;
-		password = testPassword;
-		host= testHost;
-		database = testDatabase;
+	public static boolean checkCredentials(String host, String database, String user, String password) {
+		boolean created = dbh.setupHikari(host, database, user, password);
+		System.out.println(host +" "+database+" "+user+" "+password);
+		return created;
 	}
-	public boolean checkCredentials() {
-		try{
-			//Test the connection
-			createConnection();
-			return true;
-		}
-		catch (Exception e){
-			return false;
-		} finally {
-			closeConnection();
-		}
-	}
-	public void createConnection(){
-		//Create the connection
-		String url = "jdbc:mysql://" + host + "/" +database+ "";
-		try {
-			Class.forName ("com.mysql.jdbc.Driver");
-			if(conn==null)
-				conn = DriverManager.getConnection (url, username, password);
-			//Test it against the database
-			dbst = conn.createStatement();
-			dbrs = dbst.executeQuery("SELECT 1");
 
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			closeResultSet();
-			closeStatement();
-		}
-	}
-	public boolean checkConnection(){
-		try{
-			dbst = conn.createStatement();
-			dbrs = dbst.executeQuery("SELECT 1");
-			return true;
-		}
-		catch (Exception e){
-			e.printStackTrace();
-			return false;
-		} finally {
-			closeResultSet();
-			closeStatement();
-		}
-	}
-	public void closeConnection(){
-		if (conn != null){
-			try{
-				conn.close ();
-			}
-			catch (Exception e) {
+	public ResultSet getAllTables() throws SQLException{
 
-			}
-		}
+		ResultSet rs = dbh.getMetaData();
+		return rs;
 	}
-	public ResultSet getAllTables(){
-		DatabaseMetaData dbmd;
-		dbrs=null;
-		if(conn==null)
-			createConnection();
-		try {
-			dbmd = (DatabaseMetaData) conn.getMetaData();
-			String[] types = {"TABLE"};
-			dbrs = dbmd.getTables(null, null, "%", types);
-			return dbrs;
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return dbrs;
-		} finally{
-			closeConnection();
-		}
-	}
-	public void closeResultSet(){
-		try {
-			dbrs.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
-	public void closeStatement(){
-		try {
-			dbst.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
+
 	public Vector<String> loadColumnNames(ResultSet cnrs){
 		Vector<String> columnNames = new Vector<String>();
 		try{
@@ -142,16 +66,14 @@ public class DatabaseOperations {
 		}
 		return data;
 	}	
-	public boolean deleteRecord(String selectedTable, int id){
-		PreparedStatement deleteRecord;
-		try {
-			deleteRecord = (PreparedStatement) conn.prepareStatement("DELETE FROM " + selectedTable + " WHERE id='" +id+ "'");
-			deleteRecord.executeUpdate();
-			return true;
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return false;
-		}
+	public boolean deleteRecord(String selectedTable, int id) throws SQLException{
+		String query = "DELETE FROM " + selectedTable + " WHERE id='" +id+ "'";
+		int executed = dbh.executeUpdate(query);
+		boolean da;
+		if(executed>0){
+			da=true;
+		} else { da = false;}
+		return da;
 	}
 	public ResultSetMetaData getMetaData(ResultSet rss){
 		ResultSetMetaData rsmd = new ResultSetMetaData(null, false, false, null);
@@ -162,31 +84,44 @@ public class DatabaseOperations {
 			return rsmd;
 		}
 	}
-	public ResultSet executeQuery(String sqlString){
-		Statement st = null;
-		ResultSet rs = null;
-		//Create the connection
-		String url = "jdbc:mysql://" + host + "/" + database+ "";
-		try {
-			Class.forName ("com.mysql.jdbc.Driver");
-			conn = DriverManager.getConnection (url, username, password);
-			st = conn.createStatement();
-			rs = st.executeQuery(sqlString);
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+	public ResultSet executeQuery(String sqlString) throws SQLException{
+		ResultSet rs = dbh.executeQuery(sqlString);
 		return rs;
 	}
-	public void executePreparedStatement(String query, String cellValue){
-		PreparedStatement preparedStmt;
-		try {
-			preparedStmt = (PreparedStatement) conn.prepareStatement(query);
-			preparedStmt.setString(1, cellValue);
-			preparedStmt.executeUpdate();
-		} catch (SQLException e) {
-			e.printStackTrace();
+	public void executePreparedStatement(String query) throws SQLException{
+		dbh.executeUpdate(query);
+	}
+	public void closeConn(){
+		dbh.closePool();
+	}
+	public static void addNewColumn(String selTable) throws SQLException{
+		String selectedTable=selTable;
+		ResultSetMetaData metaData = null;
+		ResultSet rs;
+		rs = dbh.executeQuery("SELECT * FROM "+ selectedTable);
+		metaData = (ResultSetMetaData) rs.getMetaData();
+		String parameters ="";
+		int nrCols = metaData.getColumnCount();
+		for(int i=1; i<=nrCols; i++){
+			parameters=parameters+"?";
+			if(i<nrCols){
+				parameters=parameters+",";
+			}
 		}
+		Connection conn = dbh.getCon();
+		PreparedStatement addNewRecord = (PreparedStatement) conn.prepareStatement("Insert into " + selectedTable +" VALUES("+parameters+")");
+		LocalDate today = LocalDate.now();
+		for(int i=1; i<=nrCols; i++){
+			if(((ResultSetMetaData) metaData).getColumnType(i)==4)
+				addNewRecord.setInt(i, 0);
+			else if(((ResultSetMetaData) metaData).getColumnType(i)==12)
+				addNewRecord.setString(i, "");
+			else if(((ResultSetMetaData) metaData).getColumnType(i)==91)
+				addNewRecord.setString(i, today.toString());
+			else if(((ResultSetMetaData) metaData).getColumnType(i)==-1)
+				addNewRecord.setString(i, "");
+		}
+		addNewRecord.executeUpdate();
+		conn.close();
 	}
 }
