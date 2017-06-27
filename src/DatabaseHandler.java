@@ -5,7 +5,7 @@
  * @author  Tamer Altintop
  * @version 2.0
  * Github project: github.com/1istbesser/DbManagementTool 
- *  */
+ */
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import java.sql.Connection;
