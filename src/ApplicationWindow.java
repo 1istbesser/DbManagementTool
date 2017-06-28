@@ -9,7 +9,7 @@
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
+
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -22,7 +22,7 @@ import java.util.Vector;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JColorChooser;
-import javax.swing.JComboBox;
+
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -33,9 +33,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
-import javax.swing.UIManager;
+
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
@@ -44,8 +43,8 @@ import javax.swing.table.DefaultTableModel;
 public class ApplicationWindow implements TableModelListener {
 	private DatabaseOperations dbOps = new DatabaseOperations();
 	private JFrame frame;
-	private JPanel panel, panelLeft, panelRight, createAccountPanel;
-	private JButton btnCreate, btnAdd, btnDelete, btnExit;
+	private JPanel panel, panelLeft, panelRight;
+	private JButton btnCreate, btnAdd, btnDelete, btnExit, btnRefresh;
 	private JTable table;
 	private String selectedTable = null;
 	private final DefaultTableModel tableModel = new DefaultTableModel();
@@ -59,8 +58,8 @@ public class ApplicationWindow implements TableModelListener {
 	private JMenuItem disconnect, appDetails, panelBackground, panelForeground, panelSelectedBackground, panelSelectedForeground, tableSelectedBackground, tableSelectedForeground, designReset;
 	private JLabel listHeader;
 	private Color someBlue = new Color(72, 121, 150), someBlue2 = new Color(12, 16, 56), someGreen = new Color(79, 249, 108);
-	
 
+	
 	public ApplicationWindow() throws SQLException{
 		setFrame();
 		addButtons();
@@ -68,6 +67,8 @@ public class ApplicationWindow implements TableModelListener {
 		setTablesList();
 		createPanel();
 		frame.add(panel);
+		frame.pack();
+		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
 	}
 
@@ -76,9 +77,9 @@ public class ApplicationWindow implements TableModelListener {
 		frame = new JFrame();
 		
 		//Setting properties
-		frame.setTitle("Tamerincode ~ A database tool V1.2");
+		frame.setTitle("Javami database tool V2.0");
 		frame.setSize(800, 600);
-		frame.setExtendedState(JFrame.MAXIMIZED_BOTH); 
+		//frame.setExtendedState(JFrame.MAXIMIZED_BOTH); 
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);	
 	}
 
@@ -89,7 +90,7 @@ public class ApplicationWindow implements TableModelListener {
 	listOfTablesNames.setBackground(someBlue);
 	listOfTablesNames.setForeground(Color.white);
 	listOfTablesNames.setSelectionBackground(someBlue2);
-	listOfTablesNames.setSelectionForeground(Color.white);
+	listOfTablesNames.setSelectionForeground(Color.black);
 	// atrs = all tables resultset
 	ResultSet atrs=null;
 	atrs = dbOps.getAllTables();
@@ -118,25 +119,28 @@ public class ApplicationWindow implements TableModelListener {
 
 	private void addButtons(){
 		//Instantisation of the buttons
-		btnCreate = new JButton("Open table");
+		btnCreate = new JButton("Create table");
 		btnAdd = new JButton("Add record");
 		btnDelete = new JButton("Delete record");
 		btnExit = new JButton("Exit");
+		btnRefresh = new JButton("Refresh");
 		
 		//Adding listeners
 		ActionListener exitButton = new listenExitButton();
 		ActionListener addButton = new listenAddButton();
 		ActionListener removeButton = new listenRemoveButton();
 		ActionListener openButton = new listenCreateButton();
+		ActionListener refreshButton = new listenRefreshButton();
 		MouseListener dblClick = new dblClick();
 		
 		listOfTablesNames.addMouseListener(dblClick);
 		btnCreate.addActionListener(openButton);
+		btnRefresh.addActionListener(refreshButton);
 		btnExit.addActionListener(exitButton);
 		btnAdd.addActionListener(addButton);
 		btnDelete.addActionListener(removeButton);
 	}
-
+	
 	private void createMenu(){
 		//Instantiating the menu objects
 		menuBar = new JMenuBar();
@@ -179,7 +183,7 @@ public class ApplicationWindow implements TableModelListener {
 		appDetails.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				JOptionPane.showMessageDialog(frame, "<html>Created by Tamer Altintop.<br/>Version V1.0.1<br/>Future versions available on www.tamerinblog.com/tamerincode/dbTool</html>");
+				JOptionPane.showMessageDialog(frame, "<html>Created by Tamer Altintop.<br/>Version V2.0<br/> See github: https://github.com/1istbesser/DbManagementTool</html>");
 			}
 		});
 		panelBackground.addActionListener(new ActionListener(){
@@ -317,6 +321,11 @@ public class ApplicationWindow implements TableModelListener {
 		c.gridy=2;
 		panelLeft.add(btnCreate, c);
 		btnCreate.setBorder(new EmptyBorder(10,40,10,40));
+		c.weightx=1;
+		c.weighty=0;
+		c.gridy=3;
+		panelLeft.add(btnRefresh, c);
+		btnRefresh.setBorder(new EmptyBorder(10,40,10,40));
 		panelLeft.setBorder(new EmptyBorder(0,10,10,10));
 		panelLeft.setBackground(someBlue);
 		panel.add(scrollTable, BorderLayout.CENTER);
@@ -335,7 +344,6 @@ public class ApplicationWindow implements TableModelListener {
 					try {
 						rs = dbOps.executeQuery("SELECT * FROM " + selectedTable);
 					} catch (SQLException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 					loadData(rs);
@@ -387,46 +395,18 @@ public class ApplicationWindow implements TableModelListener {
 			
 		}
 	}
+
+	
 	private class listenCreateButton implements ActionListener{
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			createAccountPanel = new JPanel();
-			JTextField row1= new JTextField("Table name");
-			String[] items = {"int", "varchar", "Data", "text"};
-			JComboBox<String> dataTypes = new JComboBox<String>(items);
-			JButton addTextFields = new JButton("Add 1 field");
-			JTextField row2= new JTextField("Length");
-			row2.setPreferredSize(new Dimension(50,25));
-			row1.setPreferredSize(new Dimension(200,25));
-			createAccountPanel.add(row1);
-			createAccountPanel.add(dataTypes);
-			createAccountPanel.add(row2);
-			createAccountPanel.add(addTextFields);
-			ActionListener addTextField = new listenAddFieldButton();
-			addTextFields.addActionListener(addTextField);
-			
-
-			UIManager.put("OptionPane.cancelButtonText", "Cancel");
-			UIManager.put("OptionPane.okButtonText", "Create");
-			int result = JOptionPane.showConfirmDialog(null, createAccountPanel, "Create a new table",
-					JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
-			if (result == JOptionPane.OK_OPTION) {
-				//System.out.println(role+""+fnameValue+""+lnameValue+""+pwValue+""+wcodeValue+""+salaryValue);
-			} else {
-				//System.out.println("Cancelled");
-			}
+			@SuppressWarnings("unused")
+			NewTableDialog tableDialog;
+			tableDialog = new NewTableDialog(frame, "Create a new table", selectedTable);
 				
 		}
 	}
-	private class listenAddFieldButton implements ActionListener{
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			 JTextField tfield = new JTextField();
-			 createAccountPanel.add(tfield);
-			 createAccountPanel.revalidate();
-			 createAccountPanel.repaint();
-		}
-	}
+
 
 	private class listenRemoveButton implements ActionListener{
 		public void actionPerformed(ActionEvent arg0){
@@ -443,12 +423,23 @@ public class ApplicationWindow implements TableModelListener {
 					try {
 						deleted = dbOps.deleteRecord(selectedTable2, id);
 					} catch (SQLException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 					if(deleted) model.removeRow(row);
 				}
 			
+		}
+	}
+	private class listenRefreshButton implements ActionListener{
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			try {
+				new ApplicationWindow();
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
+			frame.dispose();
+				
 		}
 	}
 

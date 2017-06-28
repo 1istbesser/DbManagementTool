@@ -15,114 +15,142 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class DatabaseHandler {
-	private Connection con;
-	private PreparedStatement pst;
-	private ResultSet rs;
-	private HikariConfig config;
-	private HikariDataSource ds;
+	private static HikariDataSource dataSource;
+	private static String hkHost, hkDatabase, hkUser, hkPassword;
+	private static Connection borrowedConnection;
 
-	public boolean setupHikari(String host, String database, String user, String password) {
-		this.config = new HikariConfig();
-		this.config.setMaximumPoolSize(100);
-		this.config.setDataSourceClassName("com.mysql.jdbc.jdbc2.optional.MysqlDataSource");
-		this.config.addDataSourceProperty("serverName", (Object)host);
-		this.config.addDataSourceProperty("port", (Object)"3306");
-		this.config.addDataSourceProperty("databaseName", (Object)database);
-		this.config.addDataSourceProperty("user", (Object)user);
-		this.config.addDataSourceProperty("password", (Object)password);
-		try {
-			this.ds = new HikariDataSource(this.config);
-			return true;
+	public DatabaseHandler(){
+
+	}
+	public static HikariDataSource getDataSource(){
+		if(dataSource == null || dataSource.isClosed()){
+			HikariConfig config = new HikariConfig();
+			config.setMaximumPoolSize(100);
+			config.setDataSourceClassName("com.mysql.jdbc.jdbc2.optional.MysqlDataSource");
+			config.addDataSourceProperty("serverName", (Object)hkHost);
+			config.addDataSourceProperty("port", (Object)"3306");
+			config.addDataSourceProperty("databaseName", (Object)hkDatabase);
+			config.addDataSourceProperty("user", (Object)hkUser);
+			config.addDataSourceProperty("password", (Object)hkPassword);
+			dataSource = new HikariDataSource(config);
 		}
-		catch (Exception E) {
-			System.out.println("No se puede!");
+		return dataSource;
+	}
+	public static boolean checkCredentials(String host, String database, String user, String password){
+		hkHost = host;
+		hkDatabase = database;
+		hkUser = user;
+		hkPassword = password;
+		
+		try {
+			getDataSource();
+			return true;
+		} catch(Exception e){
+			System.out.println("Could not get the data source with those credentials");
 			return false;
 		}
 	}
 
-	public Connection getCon() {
-		Connection con = null;
+
+	//	public boolean setupHikari(String host, String database, String user, String password) {
+	//		this.config = new HikariConfig();
+	//		this.config.setMaximumPoolSize(100);
+	//		this.config.setDataSourceClassName("com.mysql.jdbc.jdbc2.optional.MysqlDataSource");
+	//		this.config.addDataSourceProperty("serverName", (Object)host);
+	//		this.config.addDataSourceProperty("port", (Object)"3306");
+	//		this.config.addDataSourceProperty("databaseName", (Object)database);
+	//		this.config.addDataSourceProperty("user", (Object)user);
+	//		this.config.addDataSourceProperty("password", (Object)password);
+	//		try {
+	//			this.ds = new HikariDataSource(this.config);
+	//			return true;
+	//		}
+	//		catch (Exception E) {
+	//			System.out.println("No se puede!");
+	//			return false;
+	//		}
+	//	}
+
+	public static Connection getConFromHikari() {
+		borrowedConnection = null;
 		try {
-			con = this.ds.getConnection();
+			borrowedConnection = dataSource.getConnection();
 		}
 		catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return con;
+		return borrowedConnection;
+	}
+	public static void closeConFromHikari(){
+		try {
+			borrowedConnection.close();
+		} catch (SQLException e) {
+			System.out.println("Cannot close the burrowed connection.");
+			e.printStackTrace();
+		}
 	}
 
-	public ResultSet executeQuery(String query) throws SQLException {
-		this.con = null;
-		this.pst = null;
-		this.rs = null;
+	public static ResultSet executeQuery(String query) {
+		Connection con = null;
+		PreparedStatement pst = null;
+		ResultSet rs = null;
 		try {
-			this.con = this.ds.getConnection();
-			this.pst = this.con.prepareStatement(query);
-			this.rs = this.pst.executeQuery();
-			return this.rs;
+			con = dataSource.getConnection();
+			pst = con.prepareStatement(query);
+			rs = pst.executeQuery();
+			return rs;
 		}
 		catch (SQLException e) {
 			e.printStackTrace();
-			this.con.close();
+			try {
+				pst.close();
+				con.close();
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
 			return null;
 		}
 	}
 
-	public int executeUpdate(String query) throws SQLException {
+	public static int executeUpdate(String query) {
 		int result;
+		Connection con = null;
+		PreparedStatement pst = null;
+
 		block11 : {
-			this.con = null;
-			this.pst = null;
-			this.rs = null;
 			result = 0;
 			try {
-				try {
-					this.con = this.ds.getConnection();
-					this.pst = this.con.prepareStatement(query);
-					result = this.pst.executeUpdate();
-				}
-				catch (SQLException e) {
-					e.printStackTrace();
-					try {
-						this.pst.close();
-						this.con.close();
-					}
-					catch (SQLException e2) {
-						e2.printStackTrace();
-					}
-					break block11;
-				}
-			}
-			catch (Throwable throwable) {
-				try {
-					this.pst.close();
-					this.con.close();
-				}
-				catch (SQLException e) {
-					e.printStackTrace();
-				}
-				throw throwable;
-			}
-			try {
-				this.pst.close();
-				this.con.close();
+				con = dataSource.getConnection();
+				pst = con.prepareStatement(query);
+				result = pst.executeUpdate();
+				System.out.println(result+" is the result");
 			}
 			catch (SQLException e) {
+				System.out.println("Can't executeUpdate on DatabaseHandler.");
 				e.printStackTrace();
+				result=999;
+				break block11;
 			}
 		}
-		this.con.close();
+
+		try {
+			pst.close();
+			con.close();
+		} catch (SQLException e) {
+			System.out.println("Can't close the connection in the executeUpdate method from DatabaseHandler.");
+			e.printStackTrace();
+		}
 		return result;
 	}
-
-	public ResultSet getMetaData() throws SQLException {
+	//
+	public static ResultSet getMetaData() throws SQLException {
 		ResultSet rsTables;
-		this.con = null;
+		Connection con = null;
 		DatabaseMetaData dbmd = null;
 		rsTables = null;
 		try {
-			this.con = this.ds.getConnection();
-			dbmd = this.con.getMetaData();
+			con = dataSource.getConnection();
+			dbmd =con.getMetaData();
 			String[] types = new String[]{"TABLE"};
 			ResultSet resultSet = rsTables = dbmd.getTables(null, null, "%", types);
 			return resultSet;
@@ -131,18 +159,13 @@ public class DatabaseHandler {
 			e.printStackTrace();
 		}
 		finally {
-			try {
-				this.con.close();
-			}
-			catch (SQLException e) {
-				e.printStackTrace();
-			}
+			con.close();
 		}
-		this.con.close();
 		return rsTables;
 	}
 
-	public void closePool() {
-		this.ds.close();
+	public static void closePool() {
+		dataSource.close();
+		System.out.println("datasource: "+dataSource);
 	}
 }

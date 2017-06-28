@@ -104,7 +104,7 @@ public class LoginWindow {
 
 	/** The declaration and initialization of the custom colors.<br>
 	 * <b>blueish</b> - The custom color with the rgb(34, 153, 183). */
-	private Color blueish = new Color(34, 153, 183);
+	private Color blueish = new Color(0, 51, 77);
 
 	/**
 	 * Instantiates a new login window.<br><br>
@@ -129,6 +129,8 @@ public class LoginWindow {
 		addButtons();
 		setConnectButtonListener();
 		frame.add(panel);
+		frame.pack();
+		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
 	}
 
@@ -137,7 +139,7 @@ public class LoginWindow {
 	 */
 	private void createFrame(){
 		frame = new JFrame();
-		frame.setTitle("Tamerincode database tool v1.0.1");
+		frame.setTitle("Tamerincode database tool v2.0");
 		frame.setSize(800, 600);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);	
 	}
@@ -236,9 +238,9 @@ public class LoginWindow {
 	 */
 	private void addTextFields(){
 		//Instantization
-		tfUsername = new JTextField("increible");
-		pfPassword = new JPasswordField("increible");
-		tfHost = new JTextField("160.153.128.32:3306");
+		tfUsername = new JTextField("dbtest");
+		pfPassword = new JPasswordField("dbtest");
+		tfHost = new JTextField("160.153.128.32");
 		tfDataBase = new JTextField("SuperVShop");
 
 		//Setting properties
@@ -292,13 +294,12 @@ public class LoginWindow {
 				password = pfPassword.getText();
 				host = tfHost.getText();
 				database = tfDataBase.getText();
-				Boolean connected = DatabaseOperations.checkCredentials(host, database, username, password);
+				Boolean connected = DatabaseHandler.checkCredentials(host, database, username, password);
 				if(connected){
 					frame.dispose();
 					try {
 						new ApplicationWindow();
 					} catch (SQLException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				} else {

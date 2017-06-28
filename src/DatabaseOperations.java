@@ -19,17 +19,16 @@ import com.mysql.jdbc.ResultSetMetaData;
 
 
 public class DatabaseOperations {
-	private static DatabaseHandler dbh = new DatabaseHandler();
 
-	public static boolean checkCredentials(String host, String database, String user, String password) {
-		boolean created = dbh.setupHikari(host, database, user, password);
-		System.out.println(host +" "+database+" "+user+" "+password);
-		return created;
-	}
+	//	public static boolean checkCredentials(String host, String database, String user, String password) {
+	//		boolean created = dbh.setupHikari(host, database, user, password);
+	//		System.out.println(host +" "+database+" "+user+" "+password);
+	//		return created;
+	//	}
 
 	public ResultSet getAllTables() throws SQLException{
 
-		ResultSet rs = dbh.getMetaData();
+		ResultSet rs = DatabaseHandler.getMetaData();
 		return rs;
 	}
 
@@ -68,7 +67,7 @@ public class DatabaseOperations {
 	}	
 	public boolean deleteRecord(String selectedTable, int id) throws SQLException{
 		String query = "DELETE FROM " + selectedTable + " WHERE id='" +id+ "'";
-		int executed = dbh.executeUpdate(query);
+		int executed = DatabaseHandler.executeUpdate(query);
 		boolean da;
 		if(executed>0){
 			da=true;
@@ -85,20 +84,23 @@ public class DatabaseOperations {
 		}
 	}
 	public ResultSet executeQuery(String sqlString) throws SQLException{
-		ResultSet rs = dbh.executeQuery(sqlString);
+		ResultSet rs = DatabaseHandler.executeQuery(sqlString);
 		return rs;
 	}
 	public void executePreparedStatement(String query) throws SQLException{
-		dbh.executeUpdate(query);
+		DatabaseHandler.executeUpdate(query);
 	}
 	public void closeConn(){
-		dbh.closePool();
+		DatabaseHandler.closePool();
+	}
+	public void createTable(String query){
+		DatabaseHandler.executeUpdate(query);
 	}
 	public static void addNewColumn(String selTable) throws SQLException{
 		String selectedTable=selTable;
 		ResultSetMetaData metaData = null;
 		ResultSet rs;
-		rs = dbh.executeQuery("SELECT * FROM "+ selectedTable);
+		rs = DatabaseHandler.executeQuery("SELECT * FROM "+ selectedTable);
 		metaData = (ResultSetMetaData) rs.getMetaData();
 		String parameters ="";
 		int nrCols = metaData.getColumnCount();
@@ -108,7 +110,7 @@ public class DatabaseOperations {
 				parameters=parameters+",";
 			}
 		}
-		Connection conn = dbh.getCon();
+		Connection conn = DatabaseHandler.getConFromHikari();
 		PreparedStatement addNewRecord = (PreparedStatement) conn.prepareStatement("Insert into " + selectedTable +" VALUES("+parameters+")");
 		LocalDate today = LocalDate.now();
 		for(int i=1; i<=nrCols; i++){
@@ -123,5 +125,6 @@ public class DatabaseOperations {
 		}
 		addNewRecord.executeUpdate();
 		conn.close();
+		DatabaseHandler.closeConFromHikari();
 	}
 }
