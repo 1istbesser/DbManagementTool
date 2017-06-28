@@ -39,14 +39,17 @@ I zipped all of them and you can download the archive here: http://tamerinblog.c
 <strike><b>NewRow.java</b>, one separated function that will add empty rows to your table upon triggering the button. It will probably be moved into the <b>DatabaseOperations.java</b> in future versions.<br/></strike><br/>
 <b>DatabaseOperations.java</b>, here all the magic happens. It contains most of the functionality of the app.<br/>
 <b>DatabaseHandler.java</b>, here the hikari connection pool is implemented. This class handles all the database connections across the app.</p>
+<b>NewTableDialog.java</b>, here is both the interface and the functionality for creating new tables, will be refactored in future versions.</p>
 <h2>The Version history</h2>
-</p> Current version: 1.2</p><br/>
+</p> Current version: 2.1</p><br/>
 <ul>
 <li> Version 1.0, both the GUI and the methods connecting and accessing the database are in one class, the swing components and the functionability are mixed together.</li>
 <li> Version 1.1, there are new classes where most of the methods that are handling the database processes.<ul><li>However, it still has a lot of connection methods and information shared across the app. Also it appears to be working slightly slower than the previous version.</li></ul></li>
-<li>Version 1.2 - The NewRow class was removed and its content was moved into <b>DatabaseOperations.java</b>, the connections were removed from all classes and the whole database connection activity is handled in the <b>DatabaseHandler.java</b> by a connection pool. The look and feel of the app was changed to give it a more modern appearance. </li></ul><br/><br/>
+<li>Version 1.2 - The NewRow class was removed and its content was moved into <b>DatabaseOperations.java</b>, the connections were removed from all classes and the whole database connection activity is handled in the <b>DatabaseHandler.java</b> by a connection pool. The look and feel of the app was changed to give it a more modern appearance. </li>
+<li>Version 2.1 - The button to open a table was changed to the button which allowes you to create a table through a JDialog box. You can open any table by double-click, there is no need for an extra button. Also there is a refresh button because after you create a new table it won't reload automatically. </li></ul><br/><br/>
 <h2>Demo</h2>
 <p>The project is also available under the compiled version:</p><br/>
+<p>Version 2.1 - http://tamerinblog.com/download/Javami_database_tool_V2.1.jar</p>
 <p>Version 1.2 - http://tamerinblog.com/download/Tamerincode_DBTool_V1.2.jar</p>
 <p>Version 1.1 -  http://tamerinblog.com/download/TamerincodeDBV1.1Runnable.jar</p>
 <p>Version 1.0 -  http://tamerinblog.com/download/Tamerincode_DBTool.jar</p>
