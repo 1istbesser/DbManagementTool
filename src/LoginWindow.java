@@ -190,7 +190,7 @@ public class LoginWindow {
 	private void addLabels(){
 		//Instantization
 		lblWelcome = new JLabel("<html><span style='color:white;font-size:1.5em;'>Hello and welcome to this simple database management tool!</span></html>");
-		lblAdditional = new JLabel("<html>There is a demo database set so you can try the application.<br> However, feel free to connect to your own.<br/>Suggest features and report bugs on <span style=\"color:rgb(165, 207, 255);\">www.tamerinblog.com</span></html>");
+		lblAdditional = new JLabel("<html>Feel free to connect to your own database.<br/>Suggest features and report bugs on <span style=\"color:rgb(165, 207, 255);\">www.tameraltintop.com</span></html>");
 		lblUsername = new JLabel("Username:");
 		lblPassword = new JLabel("Password:");
 		lblHost = new JLabel("Host:");
@@ -238,10 +238,10 @@ public class LoginWindow {
 	 */
 	private void addTextFields(){
 		//Instantization
-		tfUsername = new JTextField("dbtest");
-		pfPassword = new JPasswordField("dbtest");
-		tfHost = new JTextField("160.153.128.32");
-		tfDataBase = new JTextField("SuperVShop");
+		tfUsername = new JTextField("Username");
+		pfPassword = new JPasswordField("Password");
+		tfHost = new JTextField("Host");
+		tfDataBase = new JTextField("Database name");
 
 		//Setting properties
 		tfUsername.setPreferredSize(new Dimension(170,20));
