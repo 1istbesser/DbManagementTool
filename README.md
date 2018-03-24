@@ -37,7 +37,7 @@
 <li>Version 2.1 - The button to open a table was changed to the button which allowes you to create a table through a JDialog box. You can open any table by double-click, there is no need for an extra button. Also there is a refresh button because after you create a new table it won't reload automatically. </li></ul><br/><br/>
 <h2>Demo</h2>
 <p>The project is also available under the compiled version:</p><br/>
-<p>Version 2.1 - http://tameraltintop.com/download/Javami_DBTool_V2.1.jar</p>
-<p>Version 1.2 - http://tameraltintop.com/download/Tamerincode_DBTool_V1.2.jar</p>
-<p>Version 1.1 -  http://tameraltintop.com/download/Tamerincode_DBTool_V1.1.jar</p>
-<p>Version 1.0 -  http://tameraltintop.com/download/Tamerincode_DBTool_V1.0.jar</p>
+<p>Version 2.1 - http://tameraltintop.com/blog/download/Javami_DBTool_V2.1.jar</p>
+<p>Version 1.2 - http://tameraltintop.com/blog/download/Tamerincode_DBTool_V1.2.jar</p>
+<p>Version 1.1 -  http://tameraltintop.com/blog/download/Tamerincode_DBTool_V1.1.jar</p>
+<p>Version 1.0 -  http://tameraltintop.com/blog/download/Tamerincode_DBTool_V1.0.jar</p>
